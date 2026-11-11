@@ -71,7 +71,17 @@ keytool -genkeypair -v -keystore release.keystore -alias studyskill -keyalg RSA 
 >
 > ✔ 회원가입·광고·개인정보 수집 없음 ✔ 오프라인에서도 동작
 
-### 1-6. 업데이트할 때
+### 1-6. 다국어 스토어 등록 (선택)
+앱이 5개 언어를 지원하므로 Play Console **기본 스토어 등록정보 → 번역 추가**에서 언어별 설명을 넣을 수 있어요.
+
+| 언어 | 짧은 설명 |
+|---|---|
+| English | Learn science-backed study methods like a game and practice them with a focus timer and flashcards. |
+| Español | Aprende técnicas de estudio respaldadas por la ciencia como un juego y practícalas con temporizador y tarjetas. |
+| 日本語 | 科学的に効果が確かめられた勉強法をゲーム感覚で学び、集中タイマーやフラッシュカードですぐ実践。 |
+| 中文 | 像玩游戏一样学习经科学验证的学习方法，并用专注计时器和记忆卡片马上实践。 |
+
+### 1-7. 업데이트할 때
 1. 웹 파일(`index.html`, `js/`, `css/`) 수정 → push
 2. `android/app/build.gradle`의 `versionName`을 올림 (예: "1.1")
 3. Actions에서 다시 빌드 (versionCode는 빌드 번호로 자동 증가) → 새 AAB 업로드
@@ -109,7 +119,8 @@ Xcode에서:
 ## 3. 개발자 메모
 ```bash
 npm install          # 의존성 설치
-npm run build        # 웹 파일 → www/
+npm run i18n         # 번역 파일(i18n/*.tsv) → js/lang/
+npm run build        # 번역 빌드 + 웹 파일 → www/
 npx cap sync         # www/ → android/, ios/ 반영
 npm run android      # Android Studio 열기
 npm run assets       # assets/ 원본으로 아이콘·스플래시 다시 생성

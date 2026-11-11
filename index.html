@@ -19,8 +19,9 @@
 <body>
 <header class="top">
   <div class="top-in">
-    <a class="logo" href="#/home"><img class="mark" src="icons/icon-192.png" alt=""><span>Study Skill Quest<small>공부력 레벨업 · 다인에듀 후안샘</small></span></a>
+    <a class="logo" href="#/home"><img class="mark" src="icons/icon-192.png" alt=""><span>Study Skill Quest<small data-i18n="logo_sub">공부력 레벨업 · 다인에듀 후안샘</small></span></a>
     <div class="top-stats">
+      <select id="langSel" class="lang-sel" aria-label="Language"><option value="ko">🌐 한국어</option><option value="en">🌐 English</option><option value="es">🌐 Español</option><option value="ja">🌐 日本語</option><option value="zh">🌐 中文</option></select>
       <span class="pill" id="streakPill" title="연속 학습일">🔥 <span id="streakN">0</span></span>
       <span class="pill" title="경험치"><span id="lvlEm">🌱</span> <span id="xpN">0</span> XP</span>
       <div class="xpbar" title="다음 레벨까지"><i id="xpBar" style="width:0%"></i></div>
@@ -30,33 +31,32 @@
 
 <div class="wrap">
   <nav class="side" id="side">
-    <a href="#/home" data-r="home">🏠 홈</a>
-    <a href="#/diag" data-r="diag">🩺 공부 습관 진단</a>
-    <a href="#/quest" data-r="quest">🗺️ 퀘스트 (7개 장)</a>
-    <a href="#/lab" data-r="lab">🔬 과학 공부법 랩</a>
-    <a href="#/tools" data-r="tools">🛠️ 도구함</a>
-    <a href="#/me" data-r="me">🏆 내 기록 · 배지</a>
+    <a href="#/home" data-r="home" data-i18n="n_home">🏠 홈</a>
+    <a href="#/diag" data-r="diag" data-i18n="n_diag">🩺 공부 습관 진단</a>
+    <a href="#/quest" data-r="quest" data-i18n="n_quest">🗺️ 퀘스트 (7개 월드)</a>
+    <a href="#/lab" data-r="lab" data-i18n="n_lab">🔬 과학 공부법 랩</a>
+    <a href="#/tools" data-r="tools" data-i18n="n_tools">🛠️ 도구함</a>
+    <a href="#/me" data-r="me" data-i18n="n_me">🏆 내 기록 · 배지</a>
     <div class="sep"></div>
     <div id="sideCh"></div>
     <div class="sep"></div>
-    <a href="#/refs" data-r="refs" class="chlink">📖 참고 자료</a>
+    <a href="#/refs" data-r="refs" class="chlink" data-i18n="n_refs">📖 참고 자료</a>
   </nav>
   <main id="app"></main>
 </div>
 
 <nav class="bottom" id="bottom">
-  <a href="#/home" data-r="home"><b>🏠</b>홈</a>
-  <a href="#/quest" data-r="quest"><b>🗺️</b>퀘스트</a>
-  <a href="#/lab" data-r="lab"><b>🔬</b>공부법 랩</a>
-  <a href="#/tools" data-r="tools"><b>🛠️</b>도구함</a>
-  <a href="#/me" data-r="me"><b>🏆</b>내 기록</a>
+  <a href="#/home" data-r="home"><b>🏠</b><span data-i18n="b_home">홈</span></a>
+  <a href="#/quest" data-r="quest"><b>🗺️</b><span data-i18n="b_quest">퀘스트</span></a>
+  <a href="#/lab" data-r="lab"><b>🔬</b><span data-i18n="b_lab">공부법 랩</span></a>
+  <a href="#/tools" data-r="tools"><b>🛠️</b><span data-i18n="b_tools">도구함</span></a>
+  <a href="#/me" data-r="me"><b>🏆</b><span data-i18n="b_me">내 기록</span></a>
 </nav>
 
 <div id="toasts"></div>
 <canvas id="confetti"></canvas>
 <a id="miniTimer" class="mini-timer" href="#/tool/timer" style="display:none"></a>
 
-<script src="js/data.js"></script>
-<script src="js/app.js"></script>
+<script src="js/i18n.js"></script>
 </body>
 </html>

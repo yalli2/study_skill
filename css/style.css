@@ -6,7 +6,7 @@
 }
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic","Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased;word-break:keep-all}
+body{font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic","Hiragino Sans","PingFang SC","Noto Sans JP","Noto Sans SC","Microsoft YaHei","Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased;word-break:keep-all}
 a{color:var(--p);text-decoration:none}
 button{font-family:inherit;cursor:pointer}
 input,textarea,select{font-family:inherit;font-size:15px;border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;background:#fff;color:var(--ink);width:100%}
@@ -241,3 +241,13 @@ canvas.pad{width:100%;height:320px;border:2px solid var(--line);border-radius:14
 .native [onclick="window.print()"]{display:none!important}
 .native body{-webkit-tap-highlight-color:transparent;overscroll-behavior-y:none}
 .native .top-in{padding-top:6px}
+
+/* ---------- 언어 ---------- */
+.lang-sel{width:auto;padding:5px 8px;border-radius:999px;font-size:13px;font-weight:700;background:#fff;border:1px solid var(--line);cursor:pointer}
+html[lang=ja] body,html[lang^=zh] body{word-break:normal;line-break:strict}
+html:not([lang=ko]) body{overflow-wrap:break-word}
+.btn.sm,.pill,.tag,.chip{white-space:nowrap}
+.namebox .btn{flex:none}
+.side .chlink span{white-space:nowrap;padding-left:6px}
+.opt,.lesson-list a,.mission span{white-space:normal}
+@media (max-width:520px){#streakPill{display:none}.lang-sel{font-size:12px;padding:4px 6px}.logo{font-size:14px}}

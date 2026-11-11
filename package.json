@@ -4,11 +4,12 @@
   "private": true,
   "description": "Study Skill Quest · 공부력 레벨업 — 자기주도학습 앱 (웹 + Android + iOS)",
   "scripts": {
-    "build": "node scripts/build-web.js",
+    "build": "node scripts/build-i18n.js && node scripts/build-web.js",
     "assets": "npx @capacitor/assets generate --android --ios --iconBackgroundColor '#6C5CE7' --splashBackgroundColor '#F7F5FF'",
     "sync": "npm run build && npx cap sync",
     "android": "npm run sync && npx cap open android",
-    "ios": "npm run sync && npx cap open ios"
+    "ios": "npm run sync && npx cap open ios",
+    "i18n": "node scripts/build-i18n.js"
   },
   "license": "UNLICENSED",
   "dependencies": {
