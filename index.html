@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Study Skill Quest · 공부력 레벨업</title>
+<meta name="description" content="자기주도학습을 위한 인터랙티브 공부법 사이트 — 공부의 원리, 목표·집중·시간 관리, 노트·읽기·글쓰기, 복습과 암기법, 시험 전략, 마음 관리, 그리고 학습과학 연구 기반 공부법과 도구들.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="top">
+  <div class="top-in">
+    <a class="logo" href="#/home"><span class="mark">🚀</span><span>Study Skill Quest<small>공부력 레벨업 · 다인에듀 후안샘</small></span></a>
+    <div class="top-stats">
+      <span class="pill" id="streakPill" title="연속 학습일">🔥 <span id="streakN">0</span></span>
+      <span class="pill" title="경험치"><span id="lvlEm">🌱</span> <span id="xpN">0</span> XP</span>
+      <div class="xpbar" title="다음 레벨까지"><i id="xpBar" style="width:0%"></i></div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <nav class="side" id="side">
+    <a href="#/home" data-r="home">🏠 홈</a>
+    <a href="#/diag" data-r="diag">🩺 공부 습관 진단</a>
+    <a href="#/quest" data-r="quest">🗺️ 퀘스트 (7개 장)</a>
+    <a href="#/lab" data-r="lab">🔬 과학 공부법 랩</a>
+    <a href="#/tools" data-r="tools">🛠️ 도구함</a>
+    <a href="#/me" data-r="me">🏆 내 기록 · 배지</a>
+    <div class="sep"></div>
+    <div id="sideCh"></div>
+    <div class="sep"></div>
+    <a href="#/refs" data-r="refs" class="chlink">📖 참고 자료</a>
+  </nav>
+  <main id="app"></main>
+</div>
+
+<nav class="bottom" id="bottom">
+  <a href="#/home" data-r="home"><b>🏠</b>홈</a>
+  <a href="#/quest" data-r="quest"><b>🗺️</b>퀘스트</a>
+  <a href="#/lab" data-r="lab"><b>🔬</b>공부법 랩</a>
+  <a href="#/tools" data-r="tools"><b>🛠️</b>도구함</a>
+  <a href="#/me" data-r="me"><b>🏆</b>내 기록</a>
+</nav>
+
+<div id="toasts"></div>
+<canvas id="confetti"></canvas>
+<a id="miniTimer" class="mini-timer" href="#/tool/timer" style="display:none"></a>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
