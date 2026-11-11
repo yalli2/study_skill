@@ -15,6 +15,22 @@ const diffDays = (a, b) => Math.round((new Date(b + "T00:00:00") - new Date(a + 
 const fmtDate = s => { const d = new Date(s + "T00:00:00"); return (d.getMonth() + 1) + "/" + d.getDate() + "(" + "일월화수목금토"[d.getDay()] + ")"; };
 const uid = () => Math.random().toString(36).slice(2, 9);
 const app = $("#app");
+const NATIVE = !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform());
+if (NATIVE) document.documentElement.classList.add("native");
+/* 파일 저장: 웹은 다운로드, 앱은 공유 시트 */
+async function saveFile(name, blob) {
+  const C = window.Capacitor;
+  if (NATIVE && C) {
+    const P = saveFile.p || (saveFile.p = { Filesystem: (C.Plugins && C.Plugins.Filesystem) || C.registerPlugin("Filesystem"), Share: (C.Plugins && C.Plugins.Share) || C.registerPlugin("Share") });
+    try {
+      const b64 = await new Promise(r => { const fr = new FileReader(); fr.onload = () => r(String(fr.result).split(",")[1]); fr.readAsDataURL(blob); });
+      const w = await P.Filesystem.writeFile({ path: name, data: b64, directory: "CACHE" });
+      await P.Share.share({ title: name, files: [w.uri] });
+    } catch (e) { toast("저장을 취소했거나 실패했어요"); }
+    return;
+  }
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); a.remove();
+}
 
 /* ---------------- 상태 ---------------- */
 const KEY = "studyskill_quest_v1";
@@ -24,6 +40,7 @@ const DEF = () => ({ xp: 0, name: "", sound: true, done: {}, boss: {}, badges: {
   mnemonics: [], pie: null, diag: null, pref: null, dumps: [], feynman: [], xpOnce: {} });
 let S;
 try { S = Object.assign(DEF(), JSON.parse(localStorage.getItem(KEY) || "{}")); } catch (e) { S = DEF(); }
+if (S.ver !== 2) { S.done = {}; S.boss = {}; S.ver = 2; }
 function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* 저장 불가 환경 */ } }
 
 /* ---------------- 효과음 ---------------- */
@@ -202,7 +219,7 @@ SS.games = {
     { q: "“게임을 하는 학생들이 성적이 낮다. 그러니 게임이 성적을 떨어뜨린다.”", o: ["당연히 맞다", "함께 나타난다고 원인이라고 할 수 있을까? 다른 요인은?", "게임은 재밌다"], a: 1, e: "상관관계 ≠ 인과관계!" },
     { q: "인터넷 글: “출처는 없지만 모두가 아는 사실임”", o: ["모두가 안다니 믿는다", "출처와 작성자, 날짜를 확인하고 다른 자료와 비교한다", "공유한다"], a: 1, e: "출처 없는 ‘상식’은 확인이 필요해요." }
   ]},
-  verbs: { title: "지시어 해독 게임", desc: "에세이 질문의 지시어가 무엇을 요구하는지 고르세요.", items: [
+  verbs: { title: "요구 행동 해독 게임", desc: "과제 질문의 핵심 동사가 무엇을 하라는지 고르세요.", items: [
     { q: "‘비교하시오(Compare)’", o: ["공통점과 차이점을 함께 제시", "하나만 자세히 설명", "개인 감상 쓰기"], a: 0, e: "비교는 공통점+차이점, 대조는 차이점 중심이에요." },
     { q: "‘평가하시오(Evaluate)’", o: ["사실만 나열", "장단점·근거를 따져 가치나 결론을 판단", "줄거리 요약"], a: 1, e: "평가는 근거를 바탕으로 판단까지 내려야 해요." },
     { q: "‘분석하시오(Analyse)’", o: ["요소로 나누어 관계와 원인을 살펴보기", "그림 그리기", "찬성만 하기"], a: 0, e: "분석 = 쪼개서 관계를 보기." },
@@ -389,8 +406,8 @@ routes.home = function () {
 /* ---------------- 퀘스트 / 챕터 / 레슨 / 보스 ---------------- */
 routes.quest = function () {
   const all = SS.chapters.reduce((a, c) => a + c.lessons.length, 0), dn = Object.keys(S.done).length;
-  app.innerHTML = `<div class="fade"><div class="page-head"><h1>🗺️ 퀘스트: 7개의 공부 월드</h1><p class="muted">DK 「Help Your Kids With Study Skills」의 7개 장 흐름을 따라, 레슨 → 미니게임 → 확인 퀴즈 → 보스 퀴즈 순서로 진행해요. 전체 진행률 <b>${dn}/${all}</b></p></div>${worldsHTML()}
-  <div class="card" style="margin-top:20px"><h3>🧭 추천 순서</h3><p class="small" style="margin:0">처음이라면 <b>1장 → 2장</b>으로 기초를 다지고, 시험이 다가오면 <b>5장(복습) → 6장(시험) → 7장(마음)</b>을 먼저 봐도 좋아요. 자신에게 필요한 장을 고르는 것도 자기주도 학습이에요!</p></div></div>`;
+  app.innerHTML = `<div class="fade"><div class="page-head"><h1>🗺️ 퀘스트: 7개의 공부 월드</h1><p class="muted">뇌의 원리 → 마음 → 시간·집중 → <b>입력</b>(읽기·노트) → <b>기억</b>(복습) → <b>출력</b>(글·시험) → 회복으로 이어지는 7개 월드예요. 레슨 → 미니게임 → 확인 퀴즈 → 보스 퀴즈 순서로 진행해요. 전체 진행률 <b>${dn}/${all}</b></p></div>${worldsHTML()}
+  <div class="card" style="margin-top:20px"><h3>🧭 추천 순서</h3><p class="small" style="margin:0">처음이라면 <b>1 → 2 → 3번 월드</b>로 기초를 다지고, 시험이 다가오면 <b>5번(기억) → 6번(출력·시험) → 7번(회복)</b>을 먼저 봐도 좋아요. 자신에게 필요한 장을 고르는 것도 자기주도 학습이에요!</p></div></div>`;
 };
 routes.ch = function (id) {
   const c = SS.chapters.find(x => x.id === +id); if (!c) return routes.quest();
@@ -557,7 +574,7 @@ const demos = {
     $$(".col", el).forEach(b => b.onclick = () => { col = b.dataset.c; w = 3; });
     $(".er", el).onclick = () => { col = "#fff"; w = 22; };
     $(".cl", el).onclick = () => { const r = cv.getBoundingClientRect(); x.fillStyle = "#fff"; x.fillRect(0, 0, r.width, r.height); };
-    $(".dl", el).onclick = () => { const a = document.createElement("a"); a.download = "dual-coding-" + $(".pr", el).value + ".png"; a.href = cv.toDataURL("image/png"); a.click(); xpOnce("draw" + today(), 10, "그림 정리"); };
+    $(".dl", el).onclick = () => { cv.toBlob(b => saveFile("dual-coding-" + $(".pr", el).value + ".png", b), "image/png"); xpOnce("draw" + today(), 10, "그림 정리"); };
   },
   feynman(el) {
     el.innerHTML = `<h3>👩‍🏫 파인만 기법 4단계</h3>
@@ -599,7 +616,7 @@ const TOOLS = [
   { id: "cornell", emoji: "📓", name: "코넬 노트", desc: "질문-필기-요약 3단 노트" },
   { id: "mindmap", emoji: "🧠", name: "마인드맵 메이커", desc: "단원 전체를 한 장에" },
   { id: "mnemonic", emoji: "🔤", name: "암기 문장 메이커", desc: "두문자어·아크로스틱 만들기" },
-  { id: "essay", emoji: "✍️", name: "에세이 질문 분해기", desc: "주제·지시어·초점·범위" },
+  { id: "essay", emoji: "✍️", name: "과제 질문 해부기", desc: "대상·요구 행동·관점·조건" },
   { id: "breath", emoji: "🌬️", name: "마음 체크 & 호흡", desc: "스트레스 온도계와 호흡 가이드" },
   { id: "journal", emoji: "📔", name: "학습 일지", desc: "계획-점검-평가 성찰 기록" }
 ];
@@ -854,7 +871,7 @@ const tools = {
       $$("[data-del]", el).forEach(b => b.onclick = () => { M.b.splice(+b.dataset.del, 1); render(); });
       $(".ab", el).onclick = () => { M.b.push({ t: "새 가지", k: "" }); render(); };
       $(".sv", el).onclick = () => { S.mindmap = M; save(); xpOnce("mm" + today(), 15, "마인드맵"); toast("저장했어요"); };
-      $(".dl", el).onclick = () => { const b = new Blob([$(".mm", el).outerHTML], { type: "image/svg+xml" }); const a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = "mindmap-" + M.c + ".svg"; a.click(); };
+      $(".dl", el).onclick = () => saveFile("mindmap-" + M.c + ".svg", new Blob([$(".mm", el).outerHTML], { type: "image/svg+xml" }));
     }
     render();
   },
@@ -877,18 +894,18 @@ const tools = {
   essay(el) {
     const V = [["비교", "공통점과 차이점을 함께"], ["대조", "차이점 중심으로"], ["분석", "요소로 나누어 관계·원인 살피기"], ["평가", "근거로 장단점을 따져 판단 내리기"], ["논하", "여러 관점을 검토하고 결론 제시"], ["논의", "여러 관점을 검토하고 결론 제시"], ["설명", "어떻게·왜를 이해하기 쉽게"], ["서술", "특징·과정을 자세히 보여 주기"], ["기술", "특징·과정을 자세히 보여 주기"], ["요약", "핵심만 간결하게"], ["정의", "정확한 뜻 밝히기"], ["비판", "강점과 약점을 근거로 판단"], ["예를 들", "구체적 사례로 보여 주기"], ["compare", "공통점과 차이점"], ["contrast", "차이점 중심"], ["analy", "요소로 나누어 관계 살피기"], ["evaluate", "근거로 판단 내리기"], ["assess", "가치·중요성 판단"], ["discuss", "여러 관점 + 결론"], ["explain", "어떻게·왜"], ["describe", "특징 보여 주기"], ["to what extent", "얼마나 그런지 정도를 판단"], ["justify", "근거를 들어 정당화"], ["outline", "핵심만 개괄"]];
     el.innerHTML = `<div class="grid g2"><div class="card"><h3>1️⃣ 질문 붙여넣기</h3><textarea class="qq" placeholder="예: 20세기 한국의 산업화가 도시 생활에 미친 영향을 평가하시오."></textarea><div class="vv" style="margin-top:8px"></div>
-      <h3 style="margin-top:12px">2️⃣ 네 조각으로 나누기</h3>
-      <label class="small">🎯 주제 (무엇에 대해?)<input class="a1" placeholder="산업화"></label><label class="small">⚙️ 지시어 (무엇을 하라고?)<input class="a2" placeholder="평가하시오"></label>
-      <label class="small">🔦 초점 (어떤 측면?)<input class="a3" placeholder="도시 생활에 미친 영향"></label><label class="small">📏 범위·한계 (시기·장소 등)<input class="a4" placeholder="20세기 한국"></label>
+      <h3 style="margin-top:12px">2️⃣ 네 개의 렌즈로 읽기</h3>
+      <label class="small">🎯 대상 (무엇에 대해?)<input class="a1" placeholder="산업화"></label><label class="small">⚙️ 요구 행동 (무엇을 하라고?)<input class="a2" placeholder="평가하시오"></label>
+      <label class="small">🔦 관점 (어떤 측면을?)<input class="a3" placeholder="도시 생활에 미친 영향"></label><label class="small">📏 조건 (시기·장소·분량 등)<input class="a4" placeholder="20세기 한국"></label>
       <button class="btn sm mk" style="margin-top:8px">개요 틀 만들기</button></div>
       <div class="card"><h3>3️⃣ 개요 틀 (PEEL)</h3><div class="ol"><p class="small muted">왼쪽을 채우면 개요 틀이 만들어져요.</p></div></div></div>`;
-    $(".qq", el).oninput = e => { const q = e.target.value.toLowerCase(); const f = V.filter(v => q.includes(v[0].toLowerCase())); $(".vv", el).innerHTML = f.length ? f.map(v => `<span class="chip t">지시어 ‘${v[0]}’ → ${v[1]}</span>`).join("") : (q ? '<span class="small muted">지시어를 찾지 못했어요. 직접 찾아 적어 보세요.</span>' : ""); };
+    $(".qq", el).oninput = e => { const q = e.target.value.toLowerCase(); const f = V.filter(v => q.includes(v[0].toLowerCase())); $(".vv", el).innerHTML = f.length ? f.map(v => `<span class="chip t">요구 행동 ‘${v[0]}’ → ${v[1]}</span>`).join("") : (q ? '<span class="small muted">요구 행동(핵심 동사)을 찾지 못했어요. 직접 찾아 적어 보세요.</span>' : ""); };
     $(".mk", el).onclick = () => {
       const [a1, a2, a3, a4] = [1, 2, 3, 4].map(i => esc($(".a" + i, el).value || "…"));
       $(".ol", el).innerHTML = `<div class="exp"><b>📍 서론</b>: ${a4} ${a1}의 배경 한두 문장 → ‘${a3}’을(를) ‘${a2}’하겠다는 방향(논지) 밝히기</div>
         ${[1, 2, 3].map(i => `<div class="exp"><b>📍 본론 ${i}</b>: <b>P</b>(주장 한 문장) → <b>E</b>(근거·자료·예시) → <b>E</b>(그 근거가 왜 주장을 뒷받침하는지 설명) → <b>L</b>(질문과 연결)</div>`).join("")}
         <div class="exp"><b>📍 결론</b>: 새 내용 없이, ${a3}에 대한 <b>최종 판단</b>을 분명히 + 핵심 근거 요약</div>
-        <div class="tip small">✅ 제출 전 체크: 지시어에 맞게 답했나? 범위를 벗어나지 않았나? 단락마다 한 주장? 출처 표기?</div>`;
+        <div class="tip small">✅ 제출 전 체크: 요구 행동에 맞게 답했나? 조건을 벗어나지 않았나? 단락마다 한 주장? 출처 표기?</div>`;
       xpOnce("essay" + today(), 10, "질문 분해");
     };
   },
@@ -1027,17 +1044,18 @@ routes.me = function () {
       <div class="row"><button class="btn sm line" id="exp">⬇️ 백업 내려받기</button><label class="btn sm line" style="cursor:pointer">⬆️ 백업 불러오기<input type="file" id="imp" accept=".json" style="display:none"></label><button class="btn sm coral" id="rst">초기화</button></div></div></div>`;
   $("#snd").onchange = e => { S.sound = e.target.checked; save(); };
   $("#nmS").onclick = () => { S.name = $("#nm2").value.trim().slice(0, 12); save(); toast("저장했어요"); };
-  $("#exp").onclick = () => { const b = new Blob([JSON.stringify(S)], { type: "application/json" }); const a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = "study-skill-backup-" + today() + ".json"; a.click(); };
+  $("#exp").onclick = () => saveFile("study-skill-backup-" + today() + ".json", new Blob([JSON.stringify(S)], { type: "application/json" }));
   $("#imp").onchange = e => { const f = e.target.files[0]; if (!f) return; const r = new FileReader(); r.onload = () => { try { S = Object.assign(DEF(), JSON.parse(r.result)); save(); hud(); sideChapters(); routes.me(); toast("불러왔어요!"); } catch (er) { toast("파일을 읽을 수 없어요"); } }; r.readAsText(f); };
   $("#rst").onclick = () => { if (confirm("모든 기록(XP, 배지, 카드, 일지 등)을 지울까요? 되돌릴 수 없어요.")) { S = DEF(); save(); hud(); sideChapters(); routes.me(); } };
 };
 routes.refs = function () {
-  app.innerHTML = `<div class="fade"><div class="page-head"><h1>📖 참고 자료</h1><p class="muted">이 사이트는 아래 교재의 7개 장 구성을 바탕으로, 학습과학 연구를 더해 새롭게 쓰고 재구성한 학습용 콘텐츠예요.</p></div>
+  app.innerHTML = `<div class="fade"><div class="page-head"><h1>📖 참고 자료</h1><p class="muted">이 앱의 설명·문제·게임·도구는 다인에듀가 직접 기획하고 집필했어요. 과학적 근거는 아래 공개 연구를 참고했으며, 연구 내용은 요약·재서술했습니다.</p></div>
     <div class="card">${SS.refs.map(r => `<div class="dq"><p style="font-weight:500">${r.u ? `<a href="${r.u}" target="_blank" rel="noopener">${esc(r.t)} ↗</a>` : esc(r.t)}</p></div>`).join("")}</div>
-    <div class="fact"><h4>🔬 팩트체크 정책</h4>교재 내용 중 최신 연구와 다른 부분(예: 좌뇌형·우뇌형, 학습 스타일 맞춤 학습)은 레슨 안에 ‘과학 팩트체크’로 표시해 바로잡았어요.</div>
-    <p class="small muted">제작: 다인에듀 · 후안샘 | 학생 자기주도학습용 무료 사이트</p></div>`;
+    <div class="fact"><h4>🔬 팩트체크 정책</h4>널리 퍼져 있지만 연구 근거가 약한 통념(예: 좌뇌형·우뇌형, 학습 스타일 맞춤 학습)은 레슨 안에 ‘과학 팩트체크’로 표시했어요.</div>
+    <p class="small muted">© 다인원격평생교육직업학원(다인에듀) · 후안샘 | <a href="privacy.html" target="_blank">개인정보처리방침</a> | 이모지는 사용자 기기의 기본 글꼴로 표시됩니다.</p></div>`;
 };
 
 /* ---------------- 시작 ---------------- */
 hud(); sideChapters(); go();
+if (!NATIVE && "serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js").catch(() => {});
 })();

@@ -1,0 +1,19 @@
+{
+  "name": "Study Skill Quest · 공부력 레벨업",
+  "short_name": "공부력 레벨업",
+  "description": "스스로 공부하는 힘을 키우는 자기주도학습 앱 — 레슨, 과학 공부법 실험, 집중 타이머, 플래시카드, 복습 계획",
+  "id": "./",
+  "start_url": "./index.html#/home",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#F7F5FF",
+  "theme_color": "#6C5CE7",
+  "lang": "ko",
+  "categories": ["education", "productivity"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
