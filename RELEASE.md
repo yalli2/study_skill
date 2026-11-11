@@ -44,7 +44,6 @@ keytool -genkeypair -v -keystore release.keystore -alias studyskill -keyalg RSA 
 2. 5~10분 뒤 완료되면 아래 **Artifacts**에서 `study-skill-quest-android` 다운로드
    - `app-debug.apk` → 휴대폰에 바로 설치해서 테스트
    - `app-release.aab` → Play Console에 업로드하는 출시 파일
-3. (`.github/workflows/android.yml`이 저장소에 없다면: 이 저장소의 `docs/android.yml` 파일을 `.github/workflows/` 폴더로 옮기세요.)
 
 ### 1-5. Play Console 등록 정보
 | 항목 | 준비물 |
